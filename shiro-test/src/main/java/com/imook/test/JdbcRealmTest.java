@@ -36,7 +36,8 @@ public class JdbcRealmTest {
         String sql = "SELECT `password` from t_user t where t.`name`= ?";
         jdbcRealm.setAuthenticationQuery(sql);
 
-
+        String roleSql = "SELECT role_name FROM `test_user_role` where username = ?";
+        jdbcRealm.setUserRolesQuery(roleSql);
 
         // 1、构建SerruityManager环境
         DefaultSecurityManager defaultSecurityManager = new DefaultSecurityManager();
