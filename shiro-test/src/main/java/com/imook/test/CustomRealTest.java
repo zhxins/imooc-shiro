@@ -3,6 +3,7 @@ package com.imook.test;
 import com.imoock.shiro.realm.CustomReal;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
 import org.apache.shiro.mgt.DefaultSecurityManager;
 import org.apache.shiro.subject.Subject;
 import org.junit.Test;
@@ -23,6 +24,12 @@ public class CustomRealTest {
         DefaultSecurityManager defaultSecurityManager = new DefaultSecurityManager();
         defaultSecurityManager.setRealm(customReal);
 
+        // shiro加密
+        HashedCredentialsMatcher matcher = new HashedCredentialsMatcher();
+        matcher.setHashAlgorithmName("md5");
+        matcher.setHashIterations(1);
+        customReal.setCredentialsMatcher(matcher);
+
         // 2、主体提交认证请求
         SecurityUtils.setSecurityManager(defaultSecurityManager);
 
@@ -36,7 +43,7 @@ public class CustomRealTest {
         System.out.println("isAuthenticated:" + subject.isAuthenticated());
         subject.isAuthenticated();
 
-//        subject.checkRole("user");
+        subject.checkRole("user");
 
         subject.checkPermission("user:add");
 

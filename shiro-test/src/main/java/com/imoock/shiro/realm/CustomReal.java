@@ -6,8 +6,10 @@ import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.SimpleAuthenticationInfo;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
+import org.apache.shiro.crypto.hash.Md5Hash;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
+import org.apache.shiro.util.ByteSource;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -24,7 +26,14 @@ public class CustomReal extends AuthorizingRealm{
 
     Map<String, String> userMap = new HashMap<String, String>();
     {
-        userMap.put("Mark", "123456");
+
+//        userMap.put("Mark", "123456");
+
+        // 123456 经过md5加密之后的密文
+        userMap.put("Mark", "e10adc3949ba59abbe56e057f20f883e");
+
+        // 加盐后的密文，盐为Mark
+        userMap.put("Mark", "283538989cef48f3d7d8a1c1bdf2008f");
         super.setName("customReal");
 
     }
@@ -67,6 +76,10 @@ public class CustomReal extends AuthorizingRealm{
 
         SimpleAuthenticationInfo authenticationInfo = new SimpleAuthenticationInfo("Mark", password, "customReal");
 
+        // 如果加盐，则需要设置加盐的名称
+        authenticationInfo.setCredentialsSalt(ByteSource.Util.bytes("Mark"));
+
+
         return authenticationInfo;
     }
 
@@ -86,4 +99,10 @@ public class CustomReal extends AuthorizingRealm{
         return sets;
     }
 
+    public static void main(String[] args) {
+
+        // 加盐
+        Md5Hash md5Hash = new Md5Hash("123456", "Mark");
+        System.out.println(md5Hash);
+    }
 }
